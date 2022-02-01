@@ -1,137 +1,24 @@
-package backtracking;
-
-import java.awt.Point;
-import java.util.Scanner;
-import java.util.Stack;
-
 /*
-	Given a maze, find a path from start to finish. X are walls, blanks are corridors,
-	'S' is the starting point, 'E' is the ending point. At each intersection, you have 
-	to decide between 
+	Visualize how the program find a path from start to finish in a maze. X are walls, blanks are corridors,
+	'S' is the starting point, 'E' is the ending point. At each intersection, the pc is allowed to 
 	- Go up
 	- Go left
 	- Go right
 	- Go down
-	
-Test Cases:
-
-CASE 1 (Best Case)
-3
-XXXX
-XSEX
-XXXX
-
-CASE 2
-3
-XXXXXX
-XES  X
-XXXXXX
-
-CASE 3
-3
-XXXXX 
-XS EX
-XXXXX
-	
-CASE 4
-4
-XXXXX 
-XS  X
-X  EX
-XXXXX
-	
-CASE 5
-4
-XXXXX 
-XE  X
-X  SX
-XXXXX
-	
-CASE 6
-4
-XXXXXXX
-XSX   X 
-X   XEX
-XXXXXXX
-	
-CASE 7
-4
-XXXXXXXX
-XSX    X
-X   EX X
-XXXXXXXX
-
-CASE 8
-4
-XXXXXXXX
-XES    X
-X    X X
-XXXXXXXX
-	
-CASE 9
-10
-XXXXXXXXXX
-X        X
-X        X
-X        X
-X        X
-X        X
-X        X
-XX XXXXXXX
-XS      EX
-XXXXXXXXXX
-
-CASE 10 (Worst Case)
-10
-XXXXXXXXXX
-X        X
-X        X
-X        X
-X        X
-X        X
-X        X
-XX XXXXXXX
-XES      X
-XXXXXXXXXX
-
-	
-CASE 11
-10
-XXXXXXXXXX
-X  X X X X
-XX X   X X
-XX XXX   X
-X    X XXX
-XX X X XEX
-X  X   X X
-XX XXX X X
-XS   X   X
-XXXXXXXXXX
-
-CASE 12
-10
-XXXXXXXXXX
-X  X X X X
-XX X   X X
-XX XXX   X
-X    X XXX
-XX X X XEX
-X  X   XXX
-XX XXX X X
-XS   X   X
-XXXXXXXXXX
-
-
  */
 
+package backtracking;
+
+import java.awt.Point;
+import java.util.InputMismatchException;
+import java.util.Scanner;
+import java.util.Stack;
+
 public class Maze {
-	private static Scanner scanner;
-	private char[][] maze;
-	private Point startingPoint;
-	private Point endingPoint;
+	private static Scanner scanner = new Scanner(System.in);
 	
 	// Notations on the maze
-	//private final static char WALL = 'X';
+	// WALL = 'X'
 	private final static char CORRIDOR = ' ';
 	private final static char STARTING_POINT = 'S';
 	private final static char ENDING_POINT = 'E';
@@ -145,16 +32,17 @@ public class Maze {
 	private final static char GO_DOWN  = 'v';
 	private final static char GO_LEFT  = '<';
 	
+	// data member
+	private char[][] maze;
+	private Point startingPoint;
+	private Point endingPoint;
+	
 	public Maze(char[][] m) {
 		maze = m.clone();
 		findStartingAndEndingPoint();		
 	}
 	
-	public Maze(char[][] m, Point s, Point e) {
-		maze = m.clone();
-	}
-
-	// Visualize how the program explore the maze and finally get to the ending point
+	// Display the path to get to the ending point on the maze
 	public void displayAnimatedSolution() {
 		if (startingPoint.equals(endingPoint)
 				|| startingPoint.equals(UNKNOWN_POSITION) 
@@ -165,87 +53,14 @@ public class Maze {
 		
 		// Initialize variables
 		char[][] markedMaze = new char[maze.length][]; 
-		Point pos = new Point(startingPoint); 
-		Stack<Point> visitedPos = new Stack<>(); 
-		visitedPos.push(startingPoint);
 		for (int i = 0; i < maze.length; ++i) { // Clone 2D array
 			markedMaze[i] = maze[i].clone(); 
 		}
 		
-		display(markedMaze, pos.x, pos.y);
-		while (move(markedMaze, pos, visitedPos)) {
-			clearScreen();
-			display(markedMaze, pos.x, pos.y);
-		}
-		if (visitedPos.empty())
-			System.out.println("Destination cannot be reached.");
-	}
-	
-	// Display the path to get to the ending point on the maze without showing dead end markers on the maze
-	public void displayAnimatedSolution2() {
-		if (startingPoint.equals(endingPoint)
-				|| startingPoint.equals(UNKNOWN_POSITION) 
-				|| endingPoint.equals(UNKNOWN_POSITION)) {
-			System.out.println("Invalid Input");
-			return;
-		}
-		
-		// Initialize variables
-		char[][] markedMaze = new char[maze.length][]; 
-		for (int i = 0; i < maze.length; ++i) { // Clone 2D array
-			markedMaze[i] = maze[i].clone(); 
-		}
-		
-		if(move(markedMaze, startingPoint.x, startingPoint.y))
+		if (move(markedMaze, startingPoint.x, startingPoint.y))
 			display(markedMaze, -1, -1); // Does not need to show current position
 		else
 			System.out.println("Destination cannot be reached.");
-	}
-	
-	// Move one step further in any direction without revisiting the location that has been visited, return if meet a dead end
-	// @param markedMaze 	contains the maze, DEAD_END markers and visited locations
-	// @param pos 			current	position
-	// @param visitedPos 	memorize the sequence of the visited locations so that we can return after met an dead end
-	// @return true to move, false to stop moving
-	private boolean move(char[][] markedMaze, Point pos, Stack<Point> visitedPos) {
-		if (pos.equals(endingPoint))
-			return false;
-		else if (pos.y > 0 
-				&& (markedMaze[pos.y - 1][pos.x] == CORRIDOR 
-				|| markedMaze[pos.y - 1][pos.x] == ENDING_POINT)) { // Go up
-			pos.translate(0, -1);
-			markedMaze[pos.y][pos.x] = GO_UP;
-			visitedPos.push(new Point(pos));
-		}
-		else if (pos.x + 1 < markedMaze[pos.y].length 
-				&& (markedMaze[pos.y][pos.x + 1] == CORRIDOR
-				|| markedMaze[pos.y][pos.x + 1] == ENDING_POINT)) { // Go right
-			pos.translate(1, 0);
-			markedMaze[pos.y][pos.x] = GO_RIGHT; 
-			visitedPos.push(new Point(pos));
-		}
-		else if (pos.y + 1 < markedMaze.length 
-				&& (markedMaze[pos.y + 1][pos.x] == CORRIDOR
-				|| markedMaze[pos.y + 1][pos.x] == ENDING_POINT)) { // Go down
-			pos.translate(0, 1);
-			markedMaze[pos.y][pos.x] = GO_DOWN; 
-			visitedPos.push(new Point(pos));
-		}
-		else if (pos.x > 0 
-				&& (markedMaze[pos.y][pos.x - 1] == CORRIDOR
-				|| markedMaze[pos.y][pos.x - 1] == ENDING_POINT)) { // Go left
-			pos.translate(-1, 0);
-			markedMaze[pos.y][pos.x] = GO_LEFT; 
-			visitedPos.push(new Point(pos));
-		}
-		else { // Go back
-			markedMaze[pos.y][pos.x] = DEAD_END; // Mark the current position as path to an dead end
-			visitedPos.pop();
-			if (visitedPos.empty()) // No way to reach the ending point
-				return false;
-			pos.setLocation(visitedPos.peek()); // Go back
-		}
-		return true;
 	}
 	
 	// Using backtracking algorithm
@@ -337,21 +152,21 @@ public class Maze {
 			System.out.println();
 	}
 	
-	public static void main(String... args) {
-		scanner = new Scanner(System.in);
+	// Test Case
+	static char[][] maze1;
+	static char[][] maze2;
+	static char[][] maze3;
+	static char[][] maze4;
+	
+	static { // static initialization block
+		maze1 = new char[][] { // Best Case
+			"XXXX".toCharArray(),
+			"XSEX".toCharArray(),
+			"XXXX".toCharArray()
+		};
+
 		
-		
-		// Input: 
-		// first line: the number of rows of the maze
-		// the rest of the line: maze
-		 
-		char[][] maze = new char[scanner.nextInt()][];
-		scanner.nextLine();
-		for (int i = 0; i < maze.length; ++i) {
-			maze[i] = scanner.nextLine().toCharArray();
-		}
-		/*
-		char[][] maze = new char[][] {
+		maze2 = new char[][] { // Common Case
 			"XXXXXXXXXX".toCharArray(), 
 			"X  X X X X".toCharArray(),
 			"XX X   X X".toCharArray(),
@@ -363,13 +178,79 @@ public class Maze {
 			"XS   X   X".toCharArray(),
 			"XXXXXXXXXX".toCharArray()
 		};
-		*/
+			
+		maze3 = new char[][] { // Worst Case
+			"XXXXXXXXXX".toCharArray(),
+			"X        X".toCharArray(),
+			"X        X".toCharArray(),
+			"X        X".toCharArray(),
+			"X        X".toCharArray(),
+			"X        X".toCharArray(),
+			"X        X".toCharArray(),
+			"XX XXXXXXX".toCharArray(),
+			"XES      X".toCharArray(),
+			"XXXXXXXXXX".toCharArray()
+		};
+			
+		maze4 = new char[][] { // Unreachable Destination
+			"XXXXXXXXXX".toCharArray(),
+			"X  X X X X".toCharArray(),
+			"XX X   X X".toCharArray(),
+			"XX XXX   X".toCharArray(),
+			"X    X XXX".toCharArray(),
+			"XX X X XEX".toCharArray(),
+			"X  X   XXX".toCharArray(),
+			"XX XXX X X".toCharArray(),
+			"XS   X   X".toCharArray(),
+			"XXXXXXXXXX".toCharArray(),
+		};
+	}
+	
+	public static void main(String... args) {
+		int mazeID;
+		Maze aMaze;
 		
-		// Output: display the maze with path to the ending point
-		Maze aMaze = new Maze(maze);
-	//	aMaze.displayAnimatedSolution();
-		//clearScreen();
-		aMaze.displayAnimatedSolution2();
-		scanner.close();
+		while (true) {
+			System.out.println("Choose a maze:");
+			System.out.println("1. Best Case");
+			System.out.println("2. Common Case");
+			System.out.println("3. Worst Case");
+			System.out.println("4. Worst Case (Unreachable Destination)");
+			System.out.println("-1. Exit");			
+			
+			// Input Validation
+			while (true) {
+				System.out.print(">> ");
+				try {
+					mazeID = scanner.nextInt();
+					scanner.nextLine();
+					if (mazeID == -1 || mazeID <= 4 && mazeID >= 1)
+						break;
+				} catch (InputMismatchException ex) {
+					scanner.nextLine(); // Consume bad input
+				}
+			}
+			
+			switch (mazeID) {
+				case -1:
+					scanner.close();
+					return;
+				case 1:
+					aMaze = new Maze(maze1);
+					break;
+				case 2:
+					aMaze = new Maze(maze2);
+					break;
+				case 3:
+					aMaze = new Maze(maze3);
+					break;
+				default: // case 4
+					aMaze = new Maze(maze4);			
+			}
+		
+			System.out.println();
+			aMaze.displayAnimatedSolution();
+			System.out.println();
+		}
 	}
 }
