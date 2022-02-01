@@ -1,11 +1,14 @@
-import java.util.Scanner;
-import java.util.Stack;
-
-/* Move all the disks from one needle to another
+/* Visualize the solution to solve Tower of Hanoi
+ * 
+ * Move all the disks from one needle to another
  * Only one disk could be moved at a time
  * A larger disk must never be stacked above a smaller one
  * One and only one extra needle could be used for intermediate storage of disks
  */
+
+import java.util.Scanner;
+import java.util.Stack;
+
 public class TowerOfHanoi {
 	static Scanner scanner = new Scanner(System.in);
 	static int numberOfSteps = 0;
@@ -83,6 +86,7 @@ public class TowerOfHanoi {
 	   
 	  */
 	
+	// Display the disks on the rods as shown above
 	static void displayTowerOfHanoi(Stack<Integer> disksOnRod1, Stack<Integer> disksOnRod2, Stack<Integer> disksOnRod3) {
 		clearScreen();
 		
@@ -146,6 +150,7 @@ public class TowerOfHanoi {
 			System.out.println();
 	}
 	
+	// Minimum steps to solve tower of hanoi
 	static int getMinimumOperation(int disks) {
 		return (int)Math.pow(2, disks) - 1;
 	}
