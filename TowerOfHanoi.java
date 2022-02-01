@@ -1,5 +1,3 @@
-package recrusion;
-
 import java.util.Scanner;
 import java.util.Stack;
 
@@ -12,15 +10,15 @@ public class TowerOfHanoi {
 	static Scanner scanner = new Scanner(System.in);
 	static int numberOfSteps = 0;
 	
-	static void towerOfHanoiAnimatedSolution(int numberOfDisks) {
+	public static void towerOfHanoiAnimatedSolution(int numberOfDisks) {
 		Stack<Integer> rod1 = new Stack<>();
 		Stack<Integer> rod2 = new Stack<>();
 		Stack<Integer> rod3 = new Stack<>();
 				
 		// Initialize rod 1
-
 		for (int i = numberOfDisks; i > 0; --i)
 			rod1.push(i);
+		
 		displayTowerOfHanoi(rod1, rod2, rod3);
 		
 		if (numberOfDisks % 2 == 0) {
@@ -71,25 +69,6 @@ public class TowerOfHanoi {
 			}
 		}
 		System.out.println("Done!");
-		scanner.close();
-	}
-	
-	// pre: numberOfDisks > 0
-	// Recursive
-	static void towerOfHanoiTextSolution(int sourceRod, int destinationRod, int numberOfDisks) {
-		numberOfSteps++;
-		
-		int temporaryRod = 6 - sourceRod - destinationRod; // rod 1 + rod 2 + rod 3 = 6
-		
-		if (numberOfDisks == 1)
-			System.out.println("Move from " + sourceRod + " to " + destinationRod);
-		else {
-			towerOfHanoiTextSolution(sourceRod, temporaryRod, numberOfDisks - 1); // Move (n - 1) disks from source to temporary rod
-			
-			System.out.println("Move from " + sourceRod + " to " + destinationRod); // Now the nth disk is the top disk, move it to the destination rod 
-			
-			towerOfHanoiTextSolution(temporaryRod, destinationRod, numberOfDisks - 1); // Move (n - 1) disks from temporary rod to destination rod
-		}
 	}
 	
 	/*
@@ -103,55 +82,6 @@ public class TowerOfHanoi {
 	       1         2         3
 	   
 	  */
-	
-	// @param first element is 0
-	static void displayTowerOfHanoi(int[] disksOnRod1, int[] disksOnRod2, int[] disksOnRod3) {
-		int totalDisks = disksOnRod1.length;
-		
-		// To display the rods
-		int rod1Position = totalDisks;
-		int rod2Position = totalDisks * 3 + 2;
-		int rod3Position = totalDisks * 5 + 4;
-		
-		// To display the disks
-		int rod1Range = totalDisks * 2 + 1;
-		int rod2Range = totalDisks * 4 + 3;
-		int rod3Range = totalDisks * 6 + 5;
-		
-		for (int i = 0; i < totalDisks; ++i) { // For every level of the rods
-			for (int j = 0; j < rod3Range; ++j) { // Construct the level
-				if (j == rod1Position || j == rod2Position || j == rod3Position) // Display the rods
-					System.out.print("|");
-				else if (i == 0) // First level always no disk
-					System.out.print(" "); 
-				else { // Other levels
-					if (j < rod1Range) { // Rod 1
-						if (j == rod1Position - disksOnRod1[i])
-							System.out.print("(");
-						else if (j == rod1Position + disksOnRod1[i])
-							System.out.print(")");
-						else
-							System.out.print(" ");
-					} else if (j < rod2Range) { // Rod 2
-						if (j == rod2Position - disksOnRod2[i])
-							System.out.print("(");
-						else if (j == rod2Position + disksOnRod2[i])
-							System.out.print(")");
-						else
-							System.out.print(" ");
-					} else { // Rod 3
-						if (j == rod3Position - disksOnRod3[i])
-							System.out.print("(");
-						else if (j == rod3Position + disksOnRod3[i])
-							System.out.print(")");
-						else
-							System.out.print(" ");
-					}
-				}
-			}
-			System.out.println();
-		}
-	}
 	
 	static void displayTowerOfHanoi(Stack<Integer> disksOnRod1, Stack<Integer> disksOnRod2, Stack<Integer> disksOnRod3) {
 		clearScreen();
@@ -225,9 +155,9 @@ public class TowerOfHanoi {
 		int disks = scanner.nextInt();
 		scanner.nextLine();
 		
-		//towerOfHanoiAnimatedSolution(disks);
-		towerOfHanoiTextSolution(1, 3, disks);
+		towerOfHanoiAnimatedSolution(disks);
 		System.out.println("Number of steps using recursion = " + numberOfSteps);
 		System.out.println("Minimum number of steps = " + getMinimumOperation(disks));
+		scanner.close();
 	}
 }
