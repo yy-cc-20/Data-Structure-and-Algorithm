@@ -1,9 +1,10 @@
 /* Visualize the solution to solve Tower of Hanoi
  * 
- * Move all the disks from one needle to another
- * Only one disk could be moved at a time
- * A larger disk must never be stacked above a smaller one
- * One and only one extra needle could be used for intermediate storage of disks
+ * Problem:
+ * Move all the disks from one needle to another.
+ * Only one disk could be moved at a time.
+ * A larger disk must never be stacked above a smaller one.
+ * One and only one extra needle could be used for intermediate storage of disks.
  */
 
 import java.util.Scanner;
