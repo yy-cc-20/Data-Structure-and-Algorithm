@@ -65,9 +65,10 @@ public class Maze {
 	
 	// Using backtracking algorithm
 	// Find the shortest path to the ending point
-	// @param markedMaze 	contains the maze and visited path
-	// @param x, y 			current	position
-	// @return true if the path is found
+	/** @param markedMaze 	contains the maze and visited path
+	 * @param x, y 			current	position
+	 * @return true if the path is found
+	 */
 	private boolean move(char[][] markedMaze, int x, int y) {
 		display(markedMaze, x, y);
 		clearScreen();
